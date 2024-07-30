@@ -14,7 +14,7 @@
 						</view>
 						<view class="info_top_right">
 							<view class="right_title">
-								<text>苍穹外卖</text>
+								<text>{{name}}</text>
 								<view class="businessStatus" v-if="shopStatus === 1">营业中</view>
 								<view class="businessStatus close" v-else>休息中</view>
 							</view>

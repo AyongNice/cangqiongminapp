@@ -25,11 +25,17 @@ import {
 	// 获取店铺联系方式
 	getMerchantInfo,
 } from "../api/api.js"
-import { mapState, mapMutations } from "vuex"
-import { baseUrl } from "../../utils/env"
+import {
+	mapState,
+	mapMutations
+} from "vuex"
+import {
+	baseUrl
+} from "../../utils/env"
 export default {
 	data() {
 		return {
+			name: '苍穹外卖',
 			title: "Hello",
 			// 去结算部分
 			openOrderCartList: false,
@@ -87,14 +93,14 @@ export default {
 	//   计算属性
 	computed: {
 		// 购物车信息列表
-		orderListDataes: function () {
+		orderListDataes: function() {
 			return this.orderListData()
 		},
-		loaddingSt: function () {
+		loaddingSt: function() {
 			return this.lodding()
 		},
 		// 计算购物车清单
-		orderAndUserInfo: function () {
+		orderAndUserInfo: function() {
 			let orderData = []
 			Array.isArray(this.orderListDataes) &&
 				this.orderListDataes.forEach((n, i) => {
@@ -113,7 +119,7 @@ export default {
 				})
 			return orderData
 		},
-		ht: function () {
+		ht: function() {
 			return (
 				uni.getMenuButtonBoundingClientRect().top +
 				uni.getMenuButtonBoundingClientRect().height +
@@ -126,7 +132,10 @@ export default {
 		this.getMenuItemTop()
 	},
 	onLoad(options) {
-		uni.onNetworkStatusChange(function (res) {
+		console.log('options', options);
+		this.shopStatus = options.status;
+		this.name = options.name;
+		uni.onNetworkStatusChange(function(res) {
 			if (res.isConnected == false) {
 				uni.navigateTo({
 					url: "/pages/nonet/index",
@@ -183,7 +192,7 @@ export default {
 			let res = wx.getMenuButtonBoundingClientRect()
 			let _this = this
 			// 获取店铺状态
-			this.getShopInfo()
+			// this.getShopInfo()
 			this.selectHeight = res.height
 			if (this.token() === "") {
 				uni.showModal({
@@ -204,7 +213,7 @@ export default {
 							// 授权
 							uni.getUserProfile({
 								desc: "登录",
-								success: function (userInfo) {
+								success: function(userInfo) {
 									_this.setBaseUserInfo(userInfo.userInfo)
 									const params = {
 										code: jsCode,
@@ -212,7 +221,8 @@ export default {
 									}
 									// 获取定位信息
 									uni.getLocation({
-										type: 'gcj02', isHighAccuracy: true
+										type: 'gcj02',
+										isHighAccuracy: true
 									}).then(([err, result]) => {
 										if (err) {
 											uni.showToast({
@@ -221,27 +231,35 @@ export default {
 											})
 										} else {
 											if (process.env.NODE_ENV === '"development"') {
-												params.location = `116.481488,39.990464`//	先写死在北京
+												params.location =
+													`116.481488,39.990464` //	先写死在北京
 											} else {
-												params.location = `${result.longitude},${result.latitude}`
+												params.location =
+													`${result.longitude},${result.latitude}`
 											}
 
 											userLogin(params)
 												.then((success) => {
 													if (success.code === 1) {
-														_this.setToken(success.data.token)
+														_this.setToken(success.data
+															.token)
 														// 保存配送费
-														_this.setDeliveryFee(success.data.deliveryFee)
+														_this.setDeliveryFee(success
+															.data.deliveryFee)
 														// 保存商铺信息
 														_this.setShopInfo({
-															shopName: success.data.shopName,
-															shopAddress: success.data.shopAddress,
-															shopId: success.data.shopId,
+															shopName: success
+																.data.shopName,
+															shopAddress: success
+																.data
+																.shopAddress,
+															shopId: success.data
+																.shopId,
 														})
 														_this.init()
 													}
 												})
-												.catch((err) => { })
+												.catch((err) => {})
 
 
 
@@ -250,7 +268,7 @@ export default {
 									})
 
 								},
-								fail: function (err) { },
+								fail: function(err) {},
 							})
 						}
 					},
@@ -283,7 +301,7 @@ export default {
 				await this.getMenuItemTop()
 			}
 			if (index == this.typeIndex) return
-			this.$nextTick(function () {
+			this.$nextTick(function() {
 				this.typeIndex = index
 				this.leftMenuStatus(index)
 			})
@@ -295,8 +313,7 @@ export default {
 				const query = uni.createSelectorQuery().in(this)
 				query
 					.select("." + elClass)
-					.fields(
-						{
+					.fields({
 							size: true,
 						},
 						(res) => {
@@ -371,7 +388,7 @@ export default {
 								}))
 						}
 					})
-					.catch((err) => { })
+					.catch((err) => {})
 			} else {
 				// 套餐
 				await querySetmeaList(param)
@@ -387,7 +404,7 @@ export default {
 								}))
 						}
 					})
-					.catch((err) => { })
+					.catch((err) => {})
 			}
 			this.typeIndex = index
 			this.setOrderNum()
@@ -396,11 +413,11 @@ export default {
 		async getShopInfo() {
 			await getShopStatus()
 				.then((res) => {
-					this.shopStatus = res.data
+
 					console.log(res.data);
 					this.setShopStatus(res.data)
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 获取店铺电话
 		async getMerchantInfo() {
@@ -410,7 +427,7 @@ export default {
 					console.log(res);
 					this.setShopPhone(res.data)
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 重新拼装image
 		getNewImage(image) {
@@ -426,7 +443,7 @@ export default {
 						this.computOrderInfo()
 					}
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 去订单页面
 		goOrder() {
@@ -505,7 +522,7 @@ export default {
 						this.flavorDataes = []
 					}
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 加入购物车
 		addShop(item) {
@@ -564,7 +581,7 @@ export default {
 						this.getDishListDataes(this.rightIdAndType)
 					}
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 清空购物车
 		clearCardOrder() {
@@ -576,22 +593,22 @@ export default {
 					// 重新调取刷新右侧具体菜品列表
 					this.getDishListDataes(this.rightIdAndType)
 				})
-				.catch((err) => { })
+				.catch((err) => {})
 		},
 		// 打开菜品牌详情
 		openDetailHandle(item) {
 			this.dishDetailes = item
 			if (item.type === 2) {
 				querySetmealDishById({
-					id: item.id,
-				})
+						id: item.id,
+					})
 					.then((res) => {
 						if (res.code === 1) {
 							this.openDetailPop = true
 							this.dishMealData = res.data
 						}
 					})
-					.catch((err) => { })
+					.catch((err) => {})
 			} else {
 				this.openDetailPop = true
 			}

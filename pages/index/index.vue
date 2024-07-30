@@ -5,7 +5,7 @@
  -->
 
 		<view style="font-size: 18px;font-weight: bold">店铺列表</view>
-		<view @click="onStore(item)" v-for="(item,index) in list " :key="index">
+		<view class="box" @click="onStore(item)" v-for="(item,index) in list " :key="index">
 			<view>店铺姓名{{item.name}}</view>
 			<view>店铺状态{{item.status}}</view>
 			<view>店铺介绍{{item.distort}}</view>
@@ -36,6 +36,9 @@
 		onLoad() {
 			this.getData()
 		},
+		onShow() {
+			this.init()
+		},
 		methods: {
 			// 从vuex信息
 			...mapState([
@@ -60,7 +63,6 @@
 				"setDeliveryFee", //设置配送费
 			]),
 			init() {
-
 				getStoreList()
 					.then((success) => {
 						if (success.code === 1) {
@@ -72,7 +74,7 @@
 			onStore(item) {
 
 				uni.navigateTo({
-					url: '/pages/index/indexdetile'
+					url: `/pages/index/indexdetile?name=${item.name}&status=${item.status},`
 				})
 
 				uni.setStorageSync("storeId", item.id)
@@ -168,17 +170,10 @@
 		}
 	}
 </script>
-<style src="./style.scss" lang="scss" scoped></style>
-<style scoped>
-	/* #ifdef MP-WEIXIN || APP-PLUS */
-	::v-deep ::-webkit-scrollbar {
-		display: none !important;
-		width: 0 !important;
-		height: 0 !important;
-		-webkit-appearance: none;
-		background: transparent;
-		color: transparent;
-	}
 
+<style scoped>
 	/* #endif */
+	.box {
+		margin: 20px 0;
+	}
 </style>
