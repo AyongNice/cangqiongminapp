@@ -133,7 +133,7 @@ export default {
 	},
 	onLoad(options) {
 		console.log('options', options);
-		this.shopStatus = options.status;
+		this.shopStatus = Number(options.status);
 		this.name = options.name;
 		uni.onNetworkStatusChange(function(res) {
 			if (res.isConnected == false) {

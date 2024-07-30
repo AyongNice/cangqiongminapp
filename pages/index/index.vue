@@ -1,21 +1,21 @@
 <template>
 	<view>
 		<!-- 导航 -->
-		<!-- 	<navBar></navBar>
- -->
+
+		<button @click="myCenterFun">f个人中心</button>
 
 		<view style="font-size: 18px;font-weight: bold">店铺列表</view>
 		<view class="box" @click="onStore(item)" v-for="(item,index) in list " :key="index">
 			<view>店铺姓名{{item.name}}</view>
-			<view>店铺状态{{item.status}}</view>
-			<view>店铺介绍{{item.distort}}</view>
+			<view>店铺状态{{ statusMap[item.status] }}</view>
+			<view v-if="item.distort">店铺介绍{{item.distort}}</view>
 		</view>
-
+		<nav-bar></nav-bar>
 
 	</view>
 </template>
 <script>
-	// import navBar from "../common/Navbar/navbar.vue" //标题
+	import navBar from "../common/Navbar/navbar.vue" //标题
 	import {
 		mapState,
 		mapMutations
@@ -25,11 +25,18 @@
 		userLogin
 	} from '../../pages/api/api.js'
 	export default {
-
+		comments: {
+			navBar
+		},
 
 		data() {
 			return {
-				list: []
+				list: [],
+				statusMap: {
+					1: '营业中',
+					0: "打样了",
+					'null': "打样了",
+				}
 			}
 		},
 
@@ -62,6 +69,11 @@
 				"setToken", //设置token
 				"setDeliveryFee", //设置配送费
 			]),
+			myCenterFun() {
+				uni.navigateTo({
+					url: '/pages/my/my'
+				})
+			},
 			init() {
 				getStoreList()
 					.then((success) => {
@@ -74,7 +86,7 @@
 			onStore(item) {
 
 				uni.navigateTo({
-					url: `/pages/index/indexdetile?name=${item.name}&status=${item.status},`
+					url: `/pages/index/indexdetile?name=${item.name}&status=${item.status}`
 				})
 
 				uni.setStorageSync("storeId", item.id)
