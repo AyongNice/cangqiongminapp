@@ -117,6 +117,9 @@
 								uni.getUserProfile({
 									desc: "登录",
 									success: function(userInfo) {
+
+
+										console.log('userInfo----', userInfo);
 										_this.setBaseUserInfo(userInfo.userInfo)
 										const params = {
 											code: jsCode,
@@ -140,8 +143,17 @@
 													params.location =
 														`${result.longitude},${result.latitude}`
 												}
+												
+												const obj ={
+													username: userInfo.userInfo.nickName,
+													cloudID: userInfo.signature,
+													location:params.location,
+													sex:userInfo.userInfo.gender,
+													openId: userInfo.signature,
+													avatar:userInfo.userInfo.avatarUrl
+												}
 
-												userLogin(params)
+												userLogin(obj)
 													.then((success) => {
 														if (success.code === 1) {
 															_this.setToken(success.data
@@ -184,7 +196,6 @@
 </script>
 
 <style scoped>
-	/* #endif */
 	.box {
 		margin: 20px 0;
 	}

@@ -214,6 +214,8 @@ export default {
 							uni.getUserProfile({
 								desc: "登录",
 								success: function(userInfo) {
+									
+									console.log('userInfo',userInfo);
 									_this.setBaseUserInfo(userInfo.userInfo)
 									const params = {
 										code: jsCode,
