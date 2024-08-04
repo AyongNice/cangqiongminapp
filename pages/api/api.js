@@ -108,6 +108,17 @@ export const userLogin = (params) => {
 	})
 }
 
+//getOpenId
+export const getOpenId = (params) => {
+	return request({
+		url: '/user/user/getOpenid',
+		method: 'POST',
+		params
+	})
+}
+
+
+
 // 菜品和套餐的分类
 export const getCategoryList = (params) => {
 	return request({

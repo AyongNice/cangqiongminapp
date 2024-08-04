@@ -3,6 +3,7 @@ import Phone from "@/components/uni-phone/index.vue" //拨打电话
 import popMask from "./components/popMask.vue" //规格
 import popCart from "./components/popCart.vue" //购物车弹出层
 import dishDetail from "./components/dishDetail.vue" //菜品详情
+import UniPopup from "../.././uni_modules/uni-popup/components/uni-popup/keypress.js"
 import {
 	// 苍穹外卖相关的接口
 	userLogin,
@@ -117,6 +118,8 @@ export default {
 						orderData.push(userData)
 					}
 				})
+
+			console.log('orderData----购物车数据', orderData);
 			return orderData
 		},
 		ht: function() {
@@ -214,8 +217,8 @@ export default {
 							uni.getUserProfile({
 								desc: "登录",
 								success: function(userInfo) {
-									
-									console.log('userInfo',userInfo);
+
+									console.log('userInfo', userInfo);
 									_this.setBaseUserInfo(userInfo.userInfo)
 									const params = {
 										code: jsCode,

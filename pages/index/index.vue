@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<!-- 导航 -->
-
-		<button @click="myCenterFun">f个人中心</button>
+		<!-- <nav-bar></nav-bar> -->
+		<button style="margin-top: 100px;" @click="myCenterFun">f个人中心</button>
 
 		<view style="font-size: 18px;font-weight: bold">店铺列表</view>
 		<view class="box" @click="onStore(item)" v-for="(item,index) in list " :key="index">
@@ -10,7 +10,6 @@
 			<view>店铺状态{{ statusMap[item.status] }}</view>
 			<view v-if="item.distort">店铺介绍{{item.distort}}</view>
 		</view>
-		<nav-bar></nav-bar>
 
 	</view>
 </template>
@@ -22,7 +21,8 @@
 	} from "vuex"
 	import {
 		getStoreList,
-		userLogin
+		userLogin,
+		getOpenId
 	} from '../../pages/api/api.js'
 	export default {
 		comments: {
@@ -113,77 +113,108 @@
 										}
 									},
 								})
+
 								// 授权
 								uni.getUserProfile({
 									desc: "登录",
 									success: function(userInfo) {
 
+										uni.login({
+											success: async function(login) {
+												if (login.code) {
+													// 成功获取到 code
+													console.log('code:=====', login);
 
-										console.log('userInfo----', userInfo);
-										_this.setBaseUserInfo(userInfo.userInfo)
-										const params = {
-											code: jsCode,
-											// 传递地理位置信息
-										}
-										// 获取定位信息
-										uni.getLocation({
-											type: 'gcj02',
-											isHighAccuracy: true
-										}).then(([err, result]) => {
-											if (err) {
-												uni.showToast({
-													title: "获取地理位置失败",
-													icon: "none"
-												})
-											} else {
-												if (process.env.NODE_ENV === '"development"') {
-													params.location =
-														`116.481488,39.990464` //	先写死在北京
-												} else {
-													params.location =
-														`${result.longitude},${result.latitude}`
-												}
-												
-												const obj ={
-													username: userInfo.userInfo.nickName,
-													cloudID: userInfo.signature,
-													location:params.location,
-													sex:userInfo.userInfo.gender,
-													openId: userInfo.signature,
-													avatar:userInfo.userInfo.avatarUrl
-												}
 
-												userLogin(obj)
-													.then((success) => {
-														if (success.code === 1) {
-															_this.setToken(success.data
-																.token)
-															// 保存配送费
-															// _this.setDeliveryFee(success
-															// 	.data.deliveryFee)
-															// // 保存商铺信息
-															// _this.setShopInfo({
-															// 	shopName: success
-															// 		.data.shopName,
-															// 	shopAddress: success
-															// 		.data
-															// 		.shopAddress,
-															// 	shopId: success
-															// 		.data.shopId,
-															// })
-															_this.init()
+
+													console.log('userInfo----', userInfo);
+													_this.setBaseUserInfo(userInfo
+														.userInfo)
+													const params = {
+														code: jsCode,
+														// 传递地理位置信息
+													}
+													// 获取定位信息
+													uni.getLocation({
+														type: 'gcj02',
+														isHighAccuracy: true
+													}).then(([err, result]) => {
+														if (err) {
+															uni.showToast({
+																title: "获取地理位置失败",
+																icon: "none"
+															})
+														} else {
+															if (process.env
+																.NODE_ENV ===
+																'"development"') {
+																params.location =
+																	`116.481488,39.990464` //	先写死在北京
+															} else {
+																params.location =
+																	`${result.longitude},${result.latitude}`
+															}
+
+															const obj = {
+																username: userInfo
+																	.userInfo
+																	.nickName,
+																location: params
+																	.location,
+																sex: userInfo
+																	.userInfo
+																	.gender,
+																code: login
+																	.code,
+																avatar: userInfo
+																	.userInfo
+																	.avatarUrl
+															}
+
+															userLogin(obj)
+																.then((
+																	success
+																) => {
+																	if (success
+																		.code ===
+																		1) {
+																		_this
+																			.setToken(
+																				success
+																				.data
+																				.token
+																			)
+																		// 保存配送费
+																		// _this.setDeliveryFee(success
+																		// 	.data.deliveryFee)
+																		// // 保存商铺信息
+																		// _this.setShopInfo({
+																		// 	shopName: success
+																		// 		.data.shopName,
+																		// 	shopAddress: success
+																		// 		.data
+																		// 		.shopAddress,
+																		// 	shopId: success
+																		// 		.data.shopId,
+																		// })
+																		_this
+																			.init()
+																	}
+																})
+
 														}
+
 													})
-													.catch((err) => {})
 
-
-
+												} else {
+													console.error('登录失败！' + res.errMsg);
+												}
 											}
+										});
 
-										})
 
-									},
-									fail: function(err) {},
+									}
+
 								})
 							}
 						},
